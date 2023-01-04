@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  bit_fastapi:
+    image: fastapi
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8083 --reload
+    ports:
+      - 8083:8083
+    volumes:
+      - ./bitcoin_backend/app:/code/app
+
+  coin_fastapi:
+    image: fastapi
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8084 --reload
+    ports:
+      - 8084:8084
+    volumes:
+      - ./present_backend/app:/code/app
