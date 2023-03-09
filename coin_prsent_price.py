@@ -3,7 +3,6 @@ from pathlib import Path
 
 # 현재 파일의 경로
 file_path = Path(__file__).resolve()
-
 # 상위 경로 backend
 parent_path = file_path.parent
 
@@ -18,13 +17,9 @@ sys.path.append(backend__)
 import os
 import django
 from channels.layers import get_channel_layer
-
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.backend_pre.config.settings.dev')
 django.setup()
-
 channel_layer = get_channel_layer()
- 
 async def send_data_to_channels_layer(data):
     await channel_layer.group_send(
         'stream_group', 
@@ -33,6 +28,7 @@ async def send_data_to_channels_layer(data):
             'data': data
         }
     )
+
 
 from pyspark.conf import SparkConf
 from pyspark.sql import SparkSession
@@ -121,10 +117,7 @@ data_df = stream_df.selectExpr("CAST(value AS STRING)")\
 
 
 result_df = data_df.select("total_price")
-query = result_df.writeStream.format("kafka") \
-    .option("kafka.bootstrap.servers", "kafka1:19092,kafka2:29092,kafka3:39092") \
-    .option("topic", "trade_bitcoin_total") \
-    .option("checkpointLocation", ".checkpoint")\
+query = result_df.writeStream.option("checkpointLocation", ".checkpoint")\
     .foreach(lambda x: asyncio.ensure_future(send_data_to_channels_layer(x)))\
     .start()
         
