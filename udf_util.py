@@ -17,11 +17,11 @@ from typing import Any, Tuple, List, Dict
 from backend.coin_price.schema.schema import utc_time
 
 
-def test_straming_preprocessing(*data: Tuple[Any]) -> Dict:
-  roww: List = [d for d in data]  
+def test_straming_preprocessing(*data: Tuple[Any]) -> Dict[str, Dict[str, Any]]:
+  roww: List[Tuple] = [d for d in data]  
   value: List[Tuple] = list(zip(*roww))
   average: Any = np.mean(value, axis=1).tolist()
-  data: Dict = {
+  result_data: Dict[str, Dict[str, Any]] = {
       "average": {
         "name": "BTC",
         "timestamp": utc_time(),
@@ -33,4 +33,4 @@ def test_straming_preprocessing(*data: Tuple[Any]) -> Dict:
         }
     }
   }
-  return data
+  return result_data
